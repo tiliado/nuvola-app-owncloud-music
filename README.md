@@ -18,6 +18,12 @@ Installation
   * Execute ``make install`` to install files to user's local directory.
   * Don't execute ``make uninstall``. Why would you do that?
 
+Changelog
+---------
+
+### 1.0 - March 5th, 2016
+
+  * Initial release.
 
 Copyright
 ---------
