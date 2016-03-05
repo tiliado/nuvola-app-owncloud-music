@@ -67,23 +67,87 @@ WebApp._onPageReady = function()
 // Extract data from the web page
 WebApp.update = function()
 {
+    var state = PlaybackState.UNKNOWN;
     var track = {
         title: null,
         artist: null,
         album: null,
         artLocation: null
     }
-
+    
+    var controls = document.getElementById("controls");
+    if (controls && controls.classList.contains('started'))
+    {
+        try
+        {
+            if (this.getButtonEnabled(1))
+                state = PlaybackState.PAUSED;
+            else if (this.getButtonEnabled(2))
+                state = PlaybackState.PLAYING;
+            
+            track.title = controls.querySelector(".song-info .title").title;
+            track.artist = controls.querySelector(".song-info .artist").title;
+            var albumArt = controls.querySelector(".albumart");
+            track.album = albumArt.title;
+            albumArt = albumArt.getAttribute("cover");
+            
+            // TODO: Album art - it's necessary to download raw bytes and send it to Nuvola.
+            // track.artLocation = albumArt ? this.getAbsoluteURL(albumArt) : null;
+        }
+        catch (e)
+        {
+            Nuvola.log("Parsing error: {1}", e);
+        }
+    }
+    
+    this.state = state;
+    player.setPlaybackState(state);
     player.setTrack(track);
-    player.setPlaybackState(PlaybackState.UNKNOWN);
+    player.setCanGoPrev(state !== PlaybackState.UNKNOWN);
+    player.setCanGoNext(state !== PlaybackState.UNKNOWN);
+    player.setCanPlay(this.getButtonEnabled(2));
+    player.setCanPause(this.getButtonEnabled(1));
 
     // Schedule the next update
     setTimeout(this.update.bind(this), 500);
 }
 
+WebApp.getAbsoluteURL = function(path)
+{
+    var port = location.port ? location.port : (location.protocol === "https:" ? "443" : "80");
+    return Nuvola.format("{1}//{2}:{3}{4}", location.protocol, location.hostname, port, path || "/");
+}
+
+WebApp.getButton = function(index)
+{
+    var buttons = document.querySelectorAll("#controls.started #play-controls img");
+    return buttons.length ? buttons[index] : null;
+}
+
+WebApp.getButtonEnabled = function(index)
+{
+    var button = this.getButton(index);
+    return button ? !button.classList.contains('ng-hide') : false;
+}
+
 // Handler of playback actions
 WebApp._onActionActivated = function(emitter, name, param)
 {
+    switch (name)
+    {
+    case PlayerAction.TOGGLE_PLAY:
+    case PlayerAction.PLAY:
+    case PlayerAction.PAUSE:
+    case PlayerAction.STOP:
+        Nuvola.clickOnElement(this.getButton(1));
+        break;
+    case PlayerAction.PREV_SONG:
+        Nuvola.clickOnElement(this.getButton(0));
+        break;
+    case PlayerAction.NEXT_SONG:
+        Nuvola.clickOnElement(this.getButton(3));
+        break;
+    }
 }
 
 WebApp.start();
