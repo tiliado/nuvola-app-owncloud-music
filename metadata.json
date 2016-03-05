@@ -8,5 +8,6 @@
     "api_major": 3,
     "api_minor": 1,
     "categories": "AudioVideo;Audio;",
-    "home_url": "http://localhost/owncloud/index.php/apps/music/"
+    "home_url": "http://localhost/owncloud/index.php/apps/music/",
+    "requirements": "HTML5AudioRequired"
 }
