@@ -26,6 +26,14 @@
 
 (function(Nuvola)
 {
+var DEFAULT_ADDRESS = "http://localhost/owncloud/index.php/apps/music/";
+var ADDRESS = "app.address";
+var ADDRESS_TYPE = "app.address_type";
+var ADDRESS_DEFAULT = "default";
+var ADDRESS_CUSTOM = "custom";
+
+// Translations
+var _ = Nuvola.Translate.gettext;
 
 // Create media player component
 var player = Nuvola.$object(Nuvola.MediaPlayer);
@@ -36,6 +44,45 @@ var PlayerAction = Nuvola.PlayerAction;
 
 // Create new WebApp prototype
 var WebApp = Nuvola.$WebApp();
+
+WebApp._onInitAppRunner = function(emitter)
+{
+    Nuvola.WebApp._onInitAppRunner.call(this, emitter);
+    Nuvola.config.setDefault(ADDRESS_TYPE, ADDRESS_DEFAULT);
+    Nuvola.config.setDefault(ADDRESS, DEFAULT_ADDRESS);
+    Nuvola.core.connect("InitializationForm", this);
+    Nuvola.core.connect("PreferencesForm", this);
+}
+
+WebApp._onInitializationForm = function(emitter, values, entries)
+{
+    if (!Nuvola.config.hasKey(ADDRESS_TYPE))
+        this.appendPreferences(values, entries);
+}
+
+WebApp._onPreferencesForm = function(emitter, values, entries)
+{
+    this.appendPreferences(values, entries);
+}
+
+WebApp.appendPreferences = function(values, entries)
+{
+    values[ADDRESS_TYPE] = Nuvola.config.get(ADDRESS_TYPE);
+    values[ADDRESS] = Nuvola.config.get(ADDRESS);
+    entries.push(["header", _("ownCloud Music")]);
+    entries.push(["label", _("Specify the address of your ownCloud Music server")]);
+    entries.push(["option", ADDRESS_TYPE, ADDRESS_DEFAULT,
+        _("Default adress:") + " " + DEFAULT_ADDRESS, null, [ADDRESS]]);
+    entries.push(["option", ADDRESS_TYPE, ADDRESS_CUSTOM,
+        _("Custom address:"), [ADDRESS], null]);
+    entries.push(["string", ADDRESS]);
+}
+
+WebApp._onHomePageRequest = function(emitter, result)
+{
+    result.url = (Nuvola.config.get(ADDRESS_TYPE) === ADDRESS_CUSTOM)
+        ? Nuvola.config.get(ADDRESS) : DEFAULT_ADDRESS;
+}
 
 // Initialization routines
 WebApp._onInitWebWorker = function(emitter)
