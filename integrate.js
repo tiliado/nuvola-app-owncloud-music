@@ -152,8 +152,8 @@ WebApp.update = function()
     player.setTrack(track);
     player.setCanGoPrev(state !== PlaybackState.UNKNOWN);
     player.setCanGoNext(state !== PlaybackState.UNKNOWN);
-    player.setCanPlay(this.getButtonEnabled(2));
-    player.setCanPause(this.getButtonEnabled(1));
+    player.setCanPlay(this.getButtonEnabled(1));
+    player.setCanPause(this.getButtonEnabled(2));
 
     // Schedule the next update
     setTimeout(this.update.bind(this), 500);
