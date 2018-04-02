@@ -1,6 +1,8 @@
 ownCloud Music Change Log
 =========================
 
+  * Switched to Chromium engine.
+
 1.2 - February 12th, 2017
 -------------------------
 

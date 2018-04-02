@@ -10,7 +10,7 @@
   "categories": "AudioVideo;Audio;",
   "home_url": "http://localhost/owncloud/index.php/apps/music/",
   "license": "2-Clause BSD",
-  "requirements": "HTML5AudioRequired",
+  "requirements": "Chromium[65] Codec[MP3] Feature[MSE]",
   "build": {
     "icons": [
       "src/icon.svg SCALABLE 64 128 256",
