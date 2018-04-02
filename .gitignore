@@ -6,3 +6,8 @@ eu.tiliado.NuvolaAppOwncloudMusic.desktop
 metadata.json
 nuvola-app-owncloud-music
 owncloud_music.tar.gz
+eu.tiliado.NuvolaAppOwncloudMusic.service
+eu.tiliado.WebRuntimeAppOwncloudMusic.appdata.xml
+eu.tiliado.WebRuntimeAppOwncloudMusic.desktop
+eu.tiliado.WebRuntimeAppOwncloudMusic.service
+nuvola-app-owncloud-music.metainfo.xml
