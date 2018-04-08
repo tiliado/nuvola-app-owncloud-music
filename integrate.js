@@ -132,6 +132,9 @@
       }
     }
 
+    var time = this._getTrackTime()
+    track.length = time ? time[1] : null
+
     this.state = state
     player.setPlaybackState(state)
     player.setTrack(track)
@@ -139,6 +142,8 @@
     player.setCanGoNext(state !== PlaybackState.UNKNOWN)
     player.setCanPlay(this.getButtonEnabled(1))
     player.setCanPause(this.getButtonEnabled(2))
+    player.setCanSeek(!!time)
+    player.setTrackPosition(time ? time[0] : null)
 
     // Schedule the next update
     setTimeout(this.update.bind(this), 500)
@@ -152,6 +157,11 @@
   WebApp.getButton = function (index) {
     var buttons = document.querySelectorAll('#controls.started #play-controls img')
     return buttons.length ? buttons[index] : null
+  }
+
+  WebApp._getTrackTime = function () {
+    var elm = document.querySelector('#controls.started .progress-info span')
+    return elm ? elm.textContent.split('/') : null
   }
 
   WebApp.getButtonEnabled = function (index) {
@@ -173,6 +183,16 @@
         break
       case PlayerAction.NEXT_SONG:
         Nuvola.clickOnElement(this.getButton(3))
+        break
+      case PlayerAction.SEEK:
+        var elm = document.querySelector('#controls.started .progress-info .seek-bar')
+        var time = this._getTrackTime()
+        if (elm && time) {
+          var total = Nuvola.parseTimeUsec(time[1])
+          if (param > 0 && param <= total) {
+            Nuvola.clickOnElement(elm, param / total, 0.5)
+          }
+        }
         break
     }
   }
