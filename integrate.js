@@ -145,6 +145,10 @@
     player.setCanSeek(!!time)
     player.setTrackPosition(time ? time[0] : null)
 
+    var elm = this._getVolumeSlider()
+    player.updateVolume(elm ? elm.value / 100 || null : null)
+    player.setCanChangeVolume(!!elm)
+
     // Schedule the next update
     setTimeout(this.update.bind(this), 500)
   }
@@ -162,6 +166,10 @@
   WebApp._getTrackTime = function () {
     var elm = document.querySelector('#controls.started .progress-info span')
     return elm ? elm.textContent.split('/') : null
+  }
+
+  WebApp._getVolumeSlider = function () {
+    return document.querySelector('#controls.started .volume-control input.volume-slider')
   }
 
   WebApp.getButtonEnabled = function (index) {
@@ -192,6 +200,12 @@
           if (param > 0 && param <= total) {
             Nuvola.clickOnElement(elm, param / total, 0.5)
           }
+        }
+        break
+      case PlayerAction.CHANGE_VOLUME:
+        var volume = this._getVolumeSlider()
+        if (volume) {
+          Nuvola.setInputValueWithEvent(volume, 100 * param)
         }
         break
     }
