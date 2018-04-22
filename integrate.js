@@ -97,6 +97,7 @@
     Nuvola.actions.connect('ActionActivated', this)
 
     // Start update routine
+    this.albumArt = {url: null, data: null}
     this.update()
   }
 
@@ -124,9 +125,15 @@
         var albumArt = controls.querySelector('.albumart')
         track.album = albumArt.title
         albumArt = albumArt.getAttribute('cover')
-
-        // TODO: Album art - it's necessary to download raw bytes and send it to Nuvola.
-        // track.artLocation = albumArt ? this.getAbsoluteURL(albumArt) : null;
+        if (albumArt) {
+          if (this.albumArt.url === albumArt) {
+            track.artLocation = this.albumArt.data
+          } else {
+            this._downloadAlbumArt(albumArt)
+          }
+        } else {
+          track.artLocation = null
+        }
       } catch (e) {
         Nuvola.log('Parsing error: {1}', e)
       }
@@ -151,6 +158,16 @@
 
     // Schedule the next update
     setTimeout(this.update.bind(this), 500)
+  }
+
+  WebApp._downloadAlbumArt = function (url) {
+    this.albumArt.url = url
+    this.albumArt.data = null
+    Nuvola.exportImageAsBase64(url, (data) => {
+      if (this.albumArt.url === url) {
+        this.albumArt.data = data
+      }
+    })
   }
 
   WebApp.getAbsoluteURL = function (path) {
