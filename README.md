@@ -35,7 +35,7 @@ Copyright
 ---------
 
   - `src/icon*.svg`
-    + Copyright 2011 Alexander King <alexanderddking@gmail.com >
+    + Copyright 2011 Alexander King <alexanderddking@gmail.com>
     + Copyright 2011 Arturo Torres Sánchez <arturo.ilhuitemoc@gmail.com>
     + License: [CC-BY-3.0](./LICENSE-CC-BY.txt)
 
