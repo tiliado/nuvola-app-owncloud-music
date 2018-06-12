@@ -1,6 +1,9 @@
 ownCloud Music Change Log
 =========================
 
+1.3 - June 12th, 2018
+---------------------
+
   * Switched to Chromium engine.
   * Track progress bar is integrated.
   * Volume slider is integrated.
