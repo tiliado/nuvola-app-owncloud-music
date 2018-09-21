@@ -1,6 +1,10 @@
 ownCloud Music Change Log
 =========================
 
+  * Nuvola 4.13 is required.
+  * The shuffle status was integrated. Issue: tiliado/nuvolaruntime#20
+  * The repeat status was integrated. Issue: tiliado/nuvolaruntime#21
+
 1.3 - June 12th, 2018
 ---------------------
 
