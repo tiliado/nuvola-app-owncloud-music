@@ -160,6 +160,10 @@
     player.setCanRepeat(repeat !== null)
     player.setRepeatState(repeat)
 
+    var shuffle = this._getShuffle()
+    player.setCanShuffle(shuffle !== null)
+    player.setShuffleState(shuffle)
+
     // Schedule the next update
     setTimeout(this.update.bind(this), 500)
   }
@@ -216,6 +220,15 @@
     }
   }
 
+  WebApp._getShuffleButton = function () {
+    return document.getElementById('shuffle')
+  }
+
+  WebApp._getShuffle = function () {
+    var button = this._getShuffleButton()
+    return button ? button.classList.contains('active') : null
+  }
+
 // Handler of playback actions
   WebApp._onActionActivated = function (emitter, name, param) {
     switch (name) {
@@ -249,6 +262,9 @@
         break
       case PlayerAction.REPEAT:
         this._setRepeat(param)
+        break
+      case PlayerAction.SHUFFLE:
+        Nuvola.clickOnElement(this._getShuffleButton())
         break
     }
   }
