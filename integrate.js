@@ -156,6 +156,10 @@
     player.updateVolume(elm ? elm.value / 100 || null : null)
     player.setCanChangeVolume(!!elm)
 
+    var repeat = this._getRepeat()
+    player.setCanRepeat(repeat !== null)
+    player.setRepeatState(repeat)
+
     // Schedule the next update
     setTimeout(this.update.bind(this), 500)
   }
@@ -194,6 +198,24 @@
     return button ? !button.classList.contains('ng-hide') : false
   }
 
+  WebApp._getRepeatButton = function () {
+    return document.getElementById('repeat')
+  }
+
+  WebApp._getRepeat = function () {
+    var button = this._getRepeatButton()
+    if (!button) {
+      return null
+    }
+    return button.classList.contains('active') ? Nuvola.PlayerRepeat.PLAYLIST : Nuvola.PlayerRepeat.NONE
+  }
+
+  WebApp._setRepeat = function (repeat) {
+    while (repeat !== Nuvola.PlayerRepeat.TRACK && this._getRepeat() !== repeat) {
+      Nuvola.clickOnElement(this._getRepeatButton())
+    }
+  }
+
 // Handler of playback actions
   WebApp._onActionActivated = function (emitter, name, param) {
     switch (name) {
@@ -224,6 +246,9 @@
         if (volume) {
           Nuvola.setInputValueWithEvent(volume, 100 * param)
         }
+        break
+      case PlayerAction.REPEAT:
+        this._setRepeat(param)
         break
     }
   }
