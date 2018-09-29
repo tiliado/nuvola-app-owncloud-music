@@ -1,4 +1,4 @@
-ownCloud Music • Nuvola Apps Runtime
+ownCloud Music • Nuvola Apps Runtime [![CircleCI](https://circleci.com/gh/tiliado/nuvola-app-owncloud-music/tree/master.svg?style=svg)](https://circleci.com/gh/tiliado/nuvola-app-owncloud-music/tree/master)
 ====================================
 
 Integration of ownCloud Music into your linux desktop via
