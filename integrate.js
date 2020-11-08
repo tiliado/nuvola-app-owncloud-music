@@ -25,24 +25,24 @@
 'use strict';
 
 (function (Nuvola) {
-  var DEFAULT_ADDRESS = 'http://localhost/owncloud/index.php/apps/music/'
-  var ADDRESS = 'app.address'
-  var ADDRESS_TYPE = 'app.address_type'
-  var ADDRESS_DEFAULT = 'default'
-  var ADDRESS_CUSTOM = 'custom'
+  const DEFAULT_ADDRESS = 'http://localhost/owncloud/index.php/apps/music/'
+  const ADDRESS = 'app.address'
+  const ADDRESS_TYPE = 'app.address_type'
+  const ADDRESS_DEFAULT = 'default'
+  const ADDRESS_CUSTOM = 'custom'
 
   // Translations
-  var _ = Nuvola.Translate.gettext
+  const _ = Nuvola.Translate.gettext
 
   // Create media player component
-  var player = Nuvola.$object(Nuvola.MediaPlayer)
+  const player = Nuvola.$object(Nuvola.MediaPlayer)
 
   // Handy aliases
-  var PlaybackState = Nuvola.PlaybackState
-  var PlayerAction = Nuvola.PlayerAction
+  const PlaybackState = Nuvola.PlaybackState
+  const PlayerAction = Nuvola.PlayerAction
 
   // Create new WebApp prototype
-  var WebApp = Nuvola.$WebApp()
+  const WebApp = Nuvola.$WebApp()
 
   WebApp._onInitAppRunner = function (emitter) {
     Nuvola.WebApp._onInitAppRunner.call(this, emitter)
@@ -76,14 +76,15 @@
 
   WebApp._onHomePageRequest = function (emitter, result) {
     result.url = (Nuvola.config.get(ADDRESS_TYPE) === ADDRESS_CUSTOM)
-      ? Nuvola.config.get(ADDRESS) : DEFAULT_ADDRESS
+      ? Nuvola.config.get(ADDRESS)
+      : DEFAULT_ADDRESS
   }
 
   // Initialization routines
   WebApp._onInitWebWorker = function (emitter) {
     Nuvola.WebApp._onInitWebWorker.call(this, emitter)
 
-    var state = document.readyState
+    const state = document.readyState
     if (state === 'interactive' || state === 'complete') {
       this._onPageReady()
     } else {
@@ -97,21 +98,21 @@
     Nuvola.actions.connect('ActionActivated', this)
 
     // Start update routine
-    this.albumArt = {url: null, data: null}
+    this.albumArt = { url: null, data: null }
     this.update()
   }
 
   // Extract data from the web page
   WebApp.update = function () {
-    var state = PlaybackState.UNKNOWN
-    var track = {
+    let state = PlaybackState.UNKNOWN
+    const track = {
       title: null,
       artist: null,
       album: null,
       artLocation: null
     }
 
-    var controls = document.getElementById('controls')
+    const controls = document.getElementById('controls')
     if (controls && controls.classList.contains('started')) {
       try {
         if (this.getButtonEnabled(1)) {
@@ -122,7 +123,7 @@
 
         track.title = controls.querySelector('.song-info .title').title
         track.artist = controls.querySelector('.song-info .artist').title
-        var albumArt = controls.querySelector('.albumart')
+        let albumArt = controls.querySelector('.albumart')
         track.album = albumArt.title
         albumArt = albumArt.getAttribute('cover')
         if (albumArt) {
@@ -139,7 +140,7 @@
       }
     }
 
-    var time = this._getTrackTime()
+    const time = this._getTrackTime()
     track.length = time ? time[1] : null
 
     this.state = state
@@ -152,15 +153,15 @@
     player.setCanSeek(!!time)
     player.setTrackPosition(time ? time[0] : null)
 
-    var elm = this._getVolumeSlider()
+    const elm = this._getVolumeSlider()
     player.updateVolume(elm ? elm.value / 100 || null : null)
     player.setCanChangeVolume(!!elm)
 
-    var repeat = this._getRepeat()
+    const repeat = this._getRepeat()
     player.setCanRepeat(repeat !== null)
     player.setRepeatState(repeat)
 
-    var shuffle = this._getShuffle()
+    const shuffle = this._getShuffle()
     player.setCanShuffle(shuffle !== null)
     player.setShuffleState(shuffle)
 
@@ -179,17 +180,17 @@
   }
 
   WebApp.getAbsoluteURL = function (path) {
-    var port = window.location.port ? window.location.port : (window.location.protocol === 'https:' ? '443' : '80')
+    const port = window.location.port ? window.location.port : (window.location.protocol === 'https:' ? '443' : '80')
     return Nuvola.format('{1}//{2}:{3}{4}', window.location.protocol, window.location.hostname, port, path || '/')
   }
 
   WebApp.getButton = function (index) {
-    var buttons = document.querySelectorAll('#controls.started #play-controls img')
+    const buttons = document.querySelectorAll('#controls.started #play-controls img')
     return buttons.length ? buttons[index] : null
   }
 
   WebApp._getTrackTime = function () {
-    var elm = document.querySelector('#controls.started .progress-info span')
+    const elm = document.querySelector('#controls.started .progress-info span')
     return elm ? elm.textContent.split('/') : null
   }
 
@@ -198,7 +199,7 @@
   }
 
   WebApp.getButtonEnabled = function (index) {
-    var button = this.getButton(index)
+    const button = this.getButton(index)
     return button ? !button.classList.contains('ng-hide') : false
   }
 
@@ -207,7 +208,7 @@
   }
 
   WebApp._getRepeat = function () {
-    var button = this._getRepeatButton()
+    const button = this._getRepeatButton()
     if (!button) {
       return null
     }
@@ -225,11 +226,11 @@
   }
 
   WebApp._getShuffle = function () {
-    var button = this._getShuffleButton()
+    const button = this._getShuffleButton()
     return button ? button.classList.contains('active') : null
   }
 
-// Handler of playback actions
+  // Handler of playback actions
   WebApp._onActionActivated = function (emitter, name, param) {
     switch (name) {
       case PlayerAction.TOGGLE_PLAY:
@@ -244,22 +245,24 @@
       case PlayerAction.NEXT_SONG:
         Nuvola.clickOnElement(this.getButton(3))
         break
-      case PlayerAction.SEEK:
-        var elm = document.querySelector('#controls.started .progress-info .seek-bar')
-        var time = this._getTrackTime()
+      case PlayerAction.SEEK: {
+        const elm = document.querySelector('#controls.started .progress-info .seek-bar')
+        const time = this._getTrackTime()
         if (elm && time) {
-          var total = Nuvola.parseTimeUsec(time[1])
+          const total = Nuvola.parseTimeUsec(time[1])
           if (param > 0 && param <= total) {
             Nuvola.clickOnElement(elm, param / total, 0.5)
           }
         }
         break
-      case PlayerAction.CHANGE_VOLUME:
-        var volume = this._getVolumeSlider()
+      }
+      case PlayerAction.CHANGE_VOLUME: {
+        const volume = this._getVolumeSlider()
         if (volume) {
           Nuvola.setInputValueWithEvent(volume, 100 * param)
         }
         break
+      }
       case PlayerAction.REPEAT:
         this._setRepeat(param)
         break
@@ -270,4 +273,4 @@
   }
 
   WebApp.start()
-})(this)  // function (Nuvola)
+})(this) // function (Nuvola)
